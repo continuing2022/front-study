@@ -1,0 +1,92 @@
+{
+  "summary": {
+    "totalFiles": 13,
+    "totalSize": "9.43 KB",
+    "largestFile": {
+      "fileName": "injectStylesIntoStyleTag.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\injectStylesIntoStyleTag.js",
+      "size": "2.42 KB",
+      "sizeInBytes": 2480
+    }
+  },
+  "dependencies": {
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\injectStylesIntoStyleTag.js": {
+      "fileName": "injectStylesIntoStyleTag.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\injectStylesIntoStyleTag.js",
+      "size": "2.42 KB",
+      "sizeInBytes": 2480
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\css-loader\\dist\\runtime\\api.js": {
+      "fileName": "api.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\css-loader\\dist\\runtime\\api.js",
+      "size": "2.25 KB",
+      "sizeInBytes": 2303
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\styleDomAPI.js": {
+      "fileName": "styleDomAPI.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\styleDomAPI.js",
+      "size": "1.5 KB",
+      "sizeInBytes": 1534
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\insertBySelector.js": {
+      "fileName": "insertBySelector.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\insertBySelector.js",
+      "size": "1003 Bytes",
+      "sizeInBytes": 1003
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\src\\jsonData.json": {
+      "fileName": "jsonData.json",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\src\\jsonData.json",
+      "size": "771 Bytes",
+      "sizeInBytes": 771
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\styleTagTransform.js": {
+      "fileName": "styleTagTransform.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\styleTagTransform.js",
+      "size": "380 Bytes",
+      "sizeInBytes": 380
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\setAttributesWithoutAttributes.js": {
+      "fileName": "setAttributesWithoutAttributes.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\setAttributesWithoutAttributes.js",
+      "size": "298 Bytes",
+      "sizeInBytes": 298
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\insertStyleElement.js": {
+      "fileName": "insertStyleElement.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\style-loader\\dist\\runtime\\insertStyleElement.js",
+      "size": "285 Bytes",
+      "sizeInBytes": 285
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\src\\index.js": {
+      "fileName": "index.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\src\\index.js",
+      "size": "175 Bytes",
+      "sizeInBytes": 175
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\src\\style.css": {
+      "fileName": "style.css",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\src\\style.css",
+      "size": "170 Bytes",
+      "sizeInBytes": 170
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\src\\2222.js": {
+      "fileName": "2222.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\src\\2222.js",
+      "size": "133 Bytes",
+      "sizeInBytes": 133
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\css-loader\\dist\\runtime\\noSourceMaps.js": {
+      "fileName": "noSourceMaps.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\node_modules\\css-loader\\dist\\runtime\\noSourceMaps.js",
+      "size": "64 Bytes",
+      "sizeInBytes": 64
+    },
+    "D:\\CodeProject\\study-exp\\webpackDemo\\src\\1111.js": {
+      "fileName": "1111.js",
+      "path": "D:\\CodeProject\\study-exp\\webpackDemo\\src\\1111.js",
+      "size": "62 Bytes",
+      "sizeInBytes": 62
+    }
+  }
+}

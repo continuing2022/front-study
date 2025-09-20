@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Watermark</title>
+    <style>
+        body {
+            background-image: url('data:image/svg+xml;base64,<BASE64_ENCODED_SVG>');
+            background-repeat: repeat;
+            opacity: 0.1; /* 调整透明度 */
+        }
+    </style>
+</head>
+<body>
+    <h1>Watermarked Content</h1>
+    <p>This page has a watermark background.</p>
+</body>
+<script>
+  // 使用svg
+  function createWatermarkSVG(text) {
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+            <text x="50%" y="50%" dy=".35em" text-anchor="middle" fill="rgba(0, 0, 0, 0.1)" font-size="30" transform="rotate(-45, 100, 100)">
+                ${text}
+            </text>
+        </svg>
+    `;
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+const watermarkText = "妙码学院";
+document.body.style.backgroundImage = `url('${createWatermarkSVG(watermarkText)}')`;
+</script>
+</html>

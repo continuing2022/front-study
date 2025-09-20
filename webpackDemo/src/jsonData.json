@@ -1,0 +1,36 @@
+{
+  "user": {
+    "id": "U123456",
+    "name": "张三",
+    "age": 28,
+    "isStudent": false,
+    "contact": {
+      "email": "zhangsan@example.com",
+      "phone": "13800138000"
+    },
+    "hobbies": ["阅读", "旅行", "编程"]
+  },
+  "orders": [
+    {
+      "orderId": "ORD2023001",
+      "product": "无线耳机",
+      "price": 799.99,
+      "quantity": 1,
+      "status": "已发货",
+      "createTime": "2023-10-01T09:30:00Z"
+    },
+    {
+      "orderId": "ORD2023002",
+      "product": "机械键盘",
+      "price": 499.00,
+      "quantity": 2,
+      "status": "已付款",
+      "createTime": "2023-10-05T14:20:00Z"
+    }
+  ],
+  "settings": {
+    "theme": "dark",
+    "notifications": true,
+    "language": "zh-CN"
+  }
+}

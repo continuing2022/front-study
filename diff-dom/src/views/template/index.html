@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js Render函数示例</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    #app {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .code-container {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-family: 'Consolas', monospace;
+    }
+    .note {
+      background: #fff8e1;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      border-left: 4px solid #ffc107;
+    }
+  </style>
+  <!-- 使用CDN引入Vue.js -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 原注释内容已被render函数替换 -->
+  </div>
+
+  <script>
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        str: "你好，Vue.js!"
+      },
+      render(h) {
+        console.log('Render函数被调用')
+        return h('div', { 
+          style: {
+            padding: '20px'
+          }
+        }, [
+          h('h1', { 
+            style: {
+              color: '#1976d2'
+            }
+          }, this.str),
+          h('p', {}, '这是使用render函数创建的内容'),
+          h('button', {
+            on: {
+              click: this.changeText
+            },
+            style: {
+              padding: '10px 15px',
+              backgroundColor: '#1976d2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginTop: '15px'
+            }
+          }, '点击改变文字')
+        ])
+      },
+      methods: {
+        changeText: function() {
+          this.str = this.str === '你好，Vue.js!' ? 
+            '文本已更改!' : '你好，Vue.js!';
+        }
+      }
+    })
+  </script>
+
+  <div class="note">
+    <h3>修复说明：</h3>
+    <ul>
+      <li>使用CDN引入Vue.js，确保库正确加载</li>
+      <li>清空#app元素内容，避免与render函数输出冲突</li>
+      <li>添加了简单样式和交互功能</li>
+      <li>保留了原代码的核心结构和render函数</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载进度演示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #f0f0f0;
+            z-index: 9999;
+        }
+        
+        #progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .content {
+            padding: 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div id="progress-bar"></div>
+    </div>
+    
+    <div class="content">
+        <h1>页面内容</h1>
+        <p>当页面加载完成后，进度条会从0%增长到100%，然后消失。</p>
+    </div>
+
+    <script>
+          function simulateLoadingProgress() {
+              const progressBar = document.getElementById('progress-bar');
+              let width = 0;
+              const interval = setInterval(() => {
+                  if (width >= 100) {
+                      clearInterval(interval);
+                      progressBar.style.width = '100%';
+                      // 进度完成后延迟隐藏
+                      setTimeout(() => {
+                          progressBar.parentElement.style.display = 'none';
+                      }, 500);
+                  } else {
+                      width += 10;
+                      progressBar.style.width = width + '%';
+                  }
+              }, 200);
+          }
+
+        // 当页面加载完成后开始模拟进度
+        window.addEventListener('load', () => {
+            simulateLoadingProgress();
+        });
+    </script>
+</body>
+</html>

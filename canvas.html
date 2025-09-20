@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Button Trigger Screenshot</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body { margin: 0; }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3); /* 页面置灰 */
+      cursor: crosshair;
+      display: none;
+      z-index: 9999;
+    }
+    #mask {
+      position: absolute;
+      border: 2px dashed #00f;
+      background: rgba(255,255,255,0.3);
+      display: none;
+      pointer-events: none;
+    }
+    #screenshot-btn {
+      position: fixed;
+      top: 20px; left: 800px;
+      z-index: 10000;
+      padding: 6px 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <p>点击左上角按钮开始截图，然后拖动鼠标选择区域。</p>
+
+  <button id="screenshot-btn">开始截图</button>
+
+  <div id="overlay">
+    <div id="mask"></div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("screenshot-btn");
+    const overlay = document.getElementById("overlay");
+    const mask = document.getElementById("mask");
+
+    let startX, startY, endX, endY;
+
+    btn.addEventListener("click", () => {
+      overlay.style.display = "block";
+    });
+
+    overlay.addEventListener("mousedown", (e) => {
+      startX = e.pageX;
+      startY = e.pageY;
+      mask.style.left = startX + "px";
+      mask.style.top = startY + "px";
+      mask.style.width = "0px";
+      mask.style.height = "0px";
+      mask.style.display = "block";
+
+      function onMouseMove(e) {
+        endX = e.pageX;
+        endY = e.pageY;
+        mask.style.left = Math.min(startX, endX) + "px";
+        mask.style.top = Math.min(startY, endY) + "px";
+        mask.style.width = Math.abs(endX - startX) + "px";
+        mask.style.height = Math.abs(endY - startY) + "px";
+      }
+
+      function onMouseUp() {
+        overlay.style.display = "none";
+        mask.style.display = "none";
+        overlay.removeEventListener("mousemove", onMouseMove);
+        overlay.removeEventListener("mouseup", onMouseUp);
+
+        // 截图并裁剪
+        html2canvas(document.body).then(canvas => {
+          const cropX = Math.min(startX, endX);
+          const cropY = Math.min(startY, endY);
+          const cropW = Math.abs(endX - startX);
+          const cropH = Math.abs(endY - startY);
+
+          const croppedCanvas = document.createElement("canvas");
+          croppedCanvas.width = cropW;
+          croppedCanvas.height = cropH;
+          const ctx = croppedCanvas.getContext("2d");
+          ctx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+          // 下载
+          const link = document.createElement("a");
+          link.download = "screenshot-area.png";
+          link.href = croppedCanvas.toDataURL("image/png");
+          link.click();
+        });
+      }
+
+      overlay.addEventListener("mousemove", onMouseMove);
+      overlay.addEventListener("mouseup", onMouseUp);
+    });
+  </script>
+</body>
+</html>
