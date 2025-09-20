@@ -1,0 +1,20 @@
+# 忽略所有 node_modules 目录
+node_modules/
+
+# 忽略 dist 构建目录
+dist/
+
+# 忽略日志文件
+*.log
+
+# 忽略环境变量文件
+.env
+.env.local
+
+# 忽略 IDE 配置文件（如 VS Code）
+.vscode/
+.idea/
+
+# 忽略特定文件
+debug.js
+temp.txt
