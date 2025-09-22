@@ -93,6 +93,7 @@
         </tbody>
       </table>
     </div>
+    <imageShow />
   </div>
 </template>
 
@@ -100,6 +101,7 @@
 import { ref } from 'vue'
 import VuexDemo from './components/VuexDemo.vue'
 import PiniaDemo from './components/PiniaDemo.vue'
+import imageShow from './components/imageShow.vue'
 import { useI18n } from 'vue-i18n'
 const currentView = ref('both')
 const i18nValue=ref(localStorage.getItem("locale")==="en"?true:false)
@@ -208,6 +210,7 @@ const onChangeLang = (val) => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
 .comparison-table h2 {
