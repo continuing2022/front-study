@@ -1,7 +1,15 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>🚀 Vuex vs Pinia 状态管理对比</h1>
+      <div class="header-title">
+        <h1>🚀 Vuex vs Pinia {{ $t("messages.stateComparison") }}</h1>
+        <el-switch
+          v-model="i18nValue"
+          class="ml-2"
+          @change="onChangeLang(i18nValue)"
+          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+        />
+      </div>
       <p>学习两种状态管理工具的区别与优势</p>
     </header>
 
@@ -92,8 +100,16 @@
 import { ref } from 'vue'
 import VuexDemo from './components/VuexDemo.vue'
 import PiniaDemo from './components/PiniaDemo.vue'
-
+import { useI18n } from 'vue-i18n'
 const currentView = ref('both')
+const i18nValue=ref(localStorage.getItem("locale")==="en"?true:false)
+const { locale } = useI18n()
+const onChangeLang = (val) => {
+  i18nValue.value = val
+  const lang = val ? "en" : "zh"
+  localStorage.setItem("locale", lang)
+  locale.value = lang
+}
 </script>
 
 <style>
@@ -126,6 +142,13 @@ const currentView = ref('both')
 .header p {
   font-size: 1.2rem;
   opacity: 0.9;
+}
+
+.header-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .toggle-section {
@@ -223,7 +246,6 @@ tr:hover {
   .header h1 {
     font-size: 2rem;
   }
-  
   .toggle-section {
     flex-direction: column;
     align-items: center;
