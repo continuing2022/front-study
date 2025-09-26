@@ -8,8 +8,8 @@
       <p>当前计数: <strong>{{ count }}</strong></p>
       <p>双倍值: <strong>{{ double }}</strong></p>
       <div class="button-group">
-        <button @click="increment">+1</button>
-        <button @click="decrement">-1</button>
+        <button @click="onAdd">+1</button>
+        <button @click="onDecrement">-1</button>
         <button @click="asyncIncrement" :disabled="loading">
           {{ loading ? '异步+1中...' : '异步+1' }}
         </button>
@@ -72,7 +72,9 @@ export default {
     return {
       loading: false,
       userLoading: false,
-      newTodo: ''
+      newTodo: '',
+      timer: null,
+      timer2: null
     }
   },
   
@@ -84,6 +86,26 @@ export default {
   },
   
   methods: {
+    onAdd(){
+      // 防抖 只执行最后一次
+      if(this.timer) clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        clearTimeout(this.timer)  
+        this.timer = null
+        this.$store.commit('INCREMENT')
+      }, 300)
+      // thi.$store.commit('INCREMENT')
+      // this.$store.dispatch('increment')
+    },
+    onDecrement(){
+      // 节流 单位时间只执行一次
+      if(this.timer2) return
+      this.timer2 = setTimeout(() => {
+        clearTimeout(this.timer2)
+        this.timer2 = null
+        this.$store.commit('DECREMENT')
+      }, 3000)
+    },
     // 映射 actions
     ...mapActions(['increment', 'decrement', 'addTodo', 'toggleTodo', 'removeTodo']),
     
