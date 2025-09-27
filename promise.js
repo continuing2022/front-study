@@ -100,6 +100,30 @@ class MyPromise{
   catch(onRejected){
     return this.then(null,onRejected)
   }
+  // promise.All
+  static all(promises){
+    return new MyPromise((resolve,reject)=>{
+      let results=[]
+      let count=0
+      promises.forEach((p,index)=>{
+        MyPromise.resolve(p).then(value=>{
+          results[index]=value
+          count++
+          if(count===promises.length){
+            resolve(results)
+          }
+        },reject)
+      })
+    })
+  }
+  // promise.race
+  static race(promises){
+    return new MyPromise((resolve,reject)=>{
+      promises.forEach(p=>{
+        MyPromise.resolve(p).then(resolve,reject)
+      })
+    })
+  }
   // 生成一个rejected状态的promise
   static reject(reason){
     return new MyPromise((resolve,reject)=>{
@@ -123,11 +147,6 @@ const promise=new MyPromise((resolve,reject)=>{
   }, 1000);
   // new Error('执行器错误')
 })
-const promise2=MyPromise.resolve('成功2')
-const promise3=MyPromise.reject('失败2')
-// console.log('promise',promise)
-console.log('promise2',promise2)
-console.log('promise3',promise3)
 // promise.then(value=>{
 //   console.log('value1',value)
 //   return new MyPromise((resolve,reject)=>{
