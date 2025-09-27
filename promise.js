@@ -97,6 +97,9 @@ class MyPromise{
       resolve(x)
     }
   }
+  catch(onRejected){
+    return this.then(null,onRejected)
+  }
 }
 
 const promise=new MyPromise((resolve,reject)=>{
@@ -114,11 +117,13 @@ promise.then(value=>{
       reject('失败2')
     }, 1000);
   })
-},reason=>{
-  console.log('reason1',reason)
-  return reason
 }).then(value=>{
   console.log('value2',value)
 },reason=>{
   console.log('reason2',reason)
+  return '失败2的返回值'
+}).then(value=>{
+  console.log('catch',value)
+},reason=>{
+  console.log('reason3',reason)
 })
