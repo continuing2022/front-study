@@ -9,6 +9,7 @@
         class="lazy-img"
         width="180"
         height="180"
+        @click="handleClick"
       />
       <div class="img-name">{{ img.split('/').pop() }}</div>
     </div>
@@ -17,15 +18,32 @@
 
 <script setup>
 import imageLazy from '../directives/imageLazy'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive, watch, watchEffect } from 'vue'
 
+const inputValue=ref('')
+const objs=reactive({
+  a:1,
+  b:{
+    c:2
+  }
+})
+// watch需要指定监听的对象
+watch(objs.b.c,(newVal)=>{
+  console.log('watch:',newVal)
+},{deep:false,immediate:true})
+// watch 立即执行 
+watchEffect(()=>{
+  console.log('watchEffect:',objs.b.c)
+})
 // 注册自定义指令
 defineOptions({
   directives: {
     imageLazy
   }
 })
-
+const handleClick=()=>{
+  objs.b.c+=1
+}
 const images = ref([])
 // 占位图（灰色 base64）
 const placeholder =
