@@ -100,6 +100,19 @@ class MyPromise{
   catch(onRejected){
     return this.then(null,onRejected)
   }
+  // 生成一个rejected状态的promise
+  static reject(reason){
+    return new MyPromise((resolve,reject)=>{
+      reject(reason)
+    })
+  }
+  // 生成一个fulfilled状态的promise
+  static resolve(value){
+    return new MyPromise((resolve,reject)=>{
+      resolve(value)
+    })
+  }
+
 }
 
 const promise=new MyPromise((resolve,reject)=>{
@@ -110,20 +123,25 @@ const promise=new MyPromise((resolve,reject)=>{
   }, 1000);
   // new Error('执行器错误')
 })
-promise.then(value=>{
-  console.log('value1',value)
-  return new MyPromise((resolve,reject)=>{
-    setTimeout(() => {
-      reject('失败2')
-    }, 1000);
-  })
-}).then(value=>{
-  console.log('value2',value)
-},reason=>{
-  console.log('reason2',reason)
-  return '失败2的返回值'
-}).then(value=>{
-  console.log('catch',value)
-},reason=>{
-  console.log('reason3',reason)
-})
+const promise2=MyPromise.resolve('成功2')
+const promise3=MyPromise.reject('失败2')
+// console.log('promise',promise)
+console.log('promise2',promise2)
+console.log('promise3',promise3)
+// promise.then(value=>{
+//   console.log('value1',value)
+//   return new MyPromise((resolve,reject)=>{
+//     setTimeout(() => {
+//       reject('失败2')
+//     }, 1000);
+//   })
+// }).then(value=>{
+//   console.log('value2',value)
+// },reason=>{
+//   console.log('reason2',reason)
+//   return '失败2的返回值'
+// }).then(value=>{
+//   console.log('catch',value)
+// },reason=>{
+//   console.log('reason3',reason)
+// })
