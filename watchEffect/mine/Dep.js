@@ -24,7 +24,12 @@ export class Dep{
     // 触发依赖 只有存在才执行
     const keySet=this.deps.get(target)?.get(key)
     if(keySet){
-      keySet.forEach(fn=>fn(newVal,oldVal))
+      keySet.forEach(fn=>{
+          const newValue=fn(newVal,oldVal)
+          if(fn.computedRef){
+            fn.computedRef.value=newValue
+          }
+      })
     }
   }
   static callBack=null//为啥一定要挂载到类上?因为我们需要在静态方法中访问它

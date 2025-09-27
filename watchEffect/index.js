@@ -1,4 +1,4 @@
-import {reactive,watch,watchEffect} from './mine/index.js'
+import {reactive,watch,watchEffect,computed} from './mine/index.js'
 
   const obj=reactive({
     a:1,
@@ -10,7 +10,6 @@ console.log('初始obj:',obj)
 const btnA=document.getElementById('btnA')
 const btnB=document.getElementById('btnB')
 const btnC=document.getElementById('btnC')
-const btnD=document.getElementById('btnD')
 
 btnA.onclick=()=>{
   obj.a=10
@@ -21,12 +20,16 @@ btnB.onclick=()=>{
 btnC.onclick=()=>{
   obj.b={c:30}
 }
-
+const Com=computed(()=>{
+  return obj.a+obj.b.c
+})
 watch(() => obj.a, (newVal) => {
   console.log('AAAAA:',newVal)
+  console.log('computed.AAAA:',Com.value)
 })
 watch(() => obj.b.c,(newVal)=>{
   console.log('BBBBB:',newVal)
+  console.log('computed.BBBB:',Com.value)
 })
 watch(() => obj.b,(newVal)=>{
   console.log('CCCCC:',newVal)
