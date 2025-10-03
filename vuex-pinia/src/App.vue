@@ -13,99 +13,34 @@
       <p>学习两种状态管理工具的区别与优势</p>
     </header>
 
-    <div class="toggle-section">
-      <button 
-        @click="currentView = 'both'" 
-        :class="{ active: currentView === 'both' }"
-      >
+    <nav class="navigation">
+      <router-link to="/" :class="{ active: $route.path === '/' }">
         并排对比
-      </button>
-      <button 
-        @click="currentView = 'vuex'" 
-        :class="{ active: currentView === 'vuex' }"
-      >
-        只看 Vuex
-      </button>
-      <button 
-        @click="currentView = 'pinia'" 
-        :class="{ active: currentView === 'pinia' }"
-      >
-        只看 Pinia
-      </button>
-    </div>
+      </router-link>
+      <router-link to="/comparison" :class="{ active: $route.path === '/comparison' }">
+        详细对比
+      </router-link>
+      <router-link to="/images" :class="{ active: $route.path === '/images' }">
+        图片展示
+      </router-link>
+      <router-link to="/diff" :class="{ active: $route.path === '/diff' }">
+        代码差异
+      </router-link>
+    </nav>
 
-    <div class="content" :class="currentView">
-      <div v-if="currentView === 'both' || currentView === 'vuex'" class="demo-section">
-        <VuexDemo />
-      </div>
-      
-      <div v-if="currentView === 'both' || currentView === 'pinia'" class="demo-section">
-        <PiniaDemo />
-      </div>
-    </div>
-
-    <div class="comparison-table">
-      <h2>📊 详细对比</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>特性</th>
-            <th>Vuex</th>
-            <th>Pinia</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>TypeScript 支持</td>
-            <td>需要额外配置</td>
-            <td>原生支持，类型推断优秀</td>
-          </tr>
-          <tr>
-            <td>代码结构</td>
-            <td>单一 store，需要 modules</td>
-            <td>多个独立 stores</td>
-          </tr>
-          <tr>
-            <td>Mutations</td>
-            <td>必须通过 mutations 修改状态</td>
-            <td>可直接修改状态</td>
-          </tr>
-          <tr>
-            <td>异步操作</td>
-            <td>Actions</td>
-            <td>Actions（更简洁）</td>
-          </tr>
-          <tr>
-            <td>DevTools</td>
-            <td>Vue DevTools</td>
-            <td>Vue DevTools（更好的体验）</td>
-          </tr>
-          <tr>
-            <td>包大小</td>
-            <td>较大</td>
-            <td>更小，按需加载</td>
-          </tr>
-          <tr>
-            <td>学习曲线</td>
-            <td>概念较多</td>
-            <td>更简单直观</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <imageShow />
+    <main class="content">
+      <router-view />
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import VuexDemo from './components/VuexDemo.vue'
-import PiniaDemo from './components/PiniaDemo.vue'
-import imageShow from './components/imageShow.vue'
 import { useI18n } from 'vue-i18n'
-const currentView = ref('both')
-const i18nValue=ref(localStorage.getItem("locale")==="en"?true:false)
+
+const i18nValue = ref(localStorage.getItem("locale") === "en" ? true : false)
 const { locale } = useI18n()
+
 const onChangeLang = (val) => {
   i18nValue.value = val
   const lang = val ? "en" : "zh"
@@ -153,30 +88,30 @@ const onChangeLang = (val) => {
   gap: 10px;
 }
 
-.toggle-section {
+.navigation {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
-.toggle-section button {
+.navigation a {
   padding: 12px 24px;
-  border: none;
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  cursor: pointer;
+  text-decoration: none;
   font-weight: bold;
   transition: all 0.3s ease;
 }
 
-.toggle-section button:hover {
+.navigation a:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
-.toggle-section button.active {
+.navigation a.active {
   background: white;
   color: #667eea;
 }
@@ -242,16 +177,18 @@ tr:hover {
 }
 
 @media (max-width: 768px) {
-  .content.both {
-    grid-template-columns: 1fr;
-  }
-  
   .header h1 {
     font-size: 2rem;
   }
-  .toggle-section {
+  
+  .navigation {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .navigation a {
+    width: 200px;
+    text-align: center;
   }
   
   table {
