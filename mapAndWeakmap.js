@@ -1,3 +1,4 @@
+// map和weakmap的区别
 const map = new Map()
 const wMap = new WeakMap()
 

@@ -1,3 +1,4 @@
+// 请求队列，限制最大并发数
 class RequestQueue {
   constructor(maxConcurrent){
     this.maxConcurrent=maxConcurrent

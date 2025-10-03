@@ -1,3 +1,8 @@
+// 迭代器和生成器
+// 迭代器是一种接口，为各种不同的数据结构提供统一的访问机制
+// 任何数据结构只要部署了Iterator接口，就可以完成遍历操作
+// 部署Iterator接口主要是为数据结构添加一个Symbol.iterator属性，该属性的值是一个函数，执行该函数会返回一个迭代器对象
+// 迭代器对象具有next方法，next方法返回一个对象，该对象具有value和done两个属性，value表示当前的值，done表示是否遍历结束
 const arr=[1,2,3,4,5]
 const str='hello'
 const objs={name:'zhangsan',age:20}

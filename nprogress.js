@@ -1,3 +1,4 @@
+// 路由守卫中使用nprogress显示进度条
 import Vue from 'vue';
 import Router from 'vue-router';
 import nprogress from 'nprogress';

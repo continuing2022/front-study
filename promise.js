@@ -1,3 +1,4 @@
+// 手写promise
 class MyPromise{
   constructor(executor){
     this.status='pending'
