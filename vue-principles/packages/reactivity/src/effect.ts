@@ -8,7 +8,8 @@ export function effect(fn,options?){
   if(options){
     Object.assign(_effect,options)
   }
-  return _effect
+  const runner = _effect.run.bind(_effect)
+  return runner
 }
 export let activeEffect = undefined // 当前正在执行的副作用函数
 // 清理函数
@@ -36,6 +37,7 @@ class ReactiveEffect{
   _trackId=0
   deps=[] // 依赖集合
   _depLength=0
+  _isRunning=false
   public active = true // 是否激活
   constructor(public fn: () => any,public scheduler: () => void){
     this.fn = fn
@@ -49,9 +51,11 @@ class ReactiveEffect{
     try {
       activeEffect = this
       preCleanEffect(this)
+      this._isRunning = true
       return this.fn()
     } finally  {
       // debugger
+      this._isRunning = false
       postCleanEffect(this)
       activeEffect=lastEffect
     }
@@ -79,6 +83,7 @@ export function trackEffect(effect,dep){
 // 触发依赖
 export function trackEffects(dep){
   dep.forEach((_,effectId)=>{
+    if(effectId._isRunning) return
     effectId.scheduler()
   })
 }
