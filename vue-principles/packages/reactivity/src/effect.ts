@@ -18,9 +18,9 @@ function preCleanEffect(effect){
   effect._trackId++
 }
 // 清理依赖
-function cleanDepEffect(effect,dep){
+function cleanDepEffect(effect, dep) {
   dep.delete(effect)
-  if(dep.size==0){
+  if (dep.size == 0 && typeof dep.cleanup === 'function') {
     dep.cleanup()
   }
 }

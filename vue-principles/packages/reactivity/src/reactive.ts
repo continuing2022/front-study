@@ -1,6 +1,6 @@
 
-import { mutableHandlers } from "./baseHandle";
-import { ReactiveFlags } from "./baseHandle";
+import { mutableHandlers,ReactiveFlags } from "./baseHandle";
+import { isObject } from "@vue/shared"
 // reactive的实现
 export function reactive(obj){
   const proxy=createReactiveObject(obj);
@@ -21,4 +21,7 @@ function createReactiveObject(target){
   const observed = new Proxy(target,mutableHandlers);
   reactiveMap.set(target,observed)// 建立缓存关系
   return observed
+}
+export function toReactive(value){
+  return isObject(value)?reactive(value):value
 }
