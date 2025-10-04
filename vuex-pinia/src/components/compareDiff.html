@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代码差异对比</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .title { font-size: 1.5rem; margin-bottom: 15px; color: #212529; }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    button:hover { background: #e9ecef; }
+
+    .diff-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: #dee2e6;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .code-panel {
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 10px 15px;
+      font-weight: 600;
+      font-size: 14px;
+      color: white;
+    }
+
+    .old-header { background: #dc3545; }
+    .new-header { background: #28a745; }
+
+    .code-content {
+      overflow: auto;
+      max-height: 600px;
+    }
+
+    .line {
+      display: flex;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 22px;
+    }
+
+    .line-num {
+      min-width: 50px;
+      padding: 2px 10px;
+      text-align: right;
+      color: #6c757d;
+      background: #f8f9fa;
+      border-right: 1px solid #dee2e6;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .line-content {
+      padding: 2px 10px;
+      white-space: pre;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .line-added { background: #d4edda; }
+    .line-removed { background: #f8d7da; }
+    .line-modified { background: #fff3cd; }
+    .line-unchanged { background: white; }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-badge {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .badge-added { background: #28a745; }
+    .badge-removed { background: #dc3545; }
+    .badge-modified { background: #ffc107; }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      animation: slideIn 0.3s;
+    }
+
+    .toast.show { display: block; }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">代码差异对比工具</h1>
+      <div class="buttons">
+        <button onclick="copyCode('old')">复制旧代码</button>
+        <button onclick="copyCode('new')">复制新代码</button>
+        <button onclick="toggleView()">切换视图</button>
+      </div>
+    </div>
+
+    <div class="diff-container" id="diffContainer"></div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-badge badge-added"></span>
+        <span>新增: <strong id="addedCount">0</strong> 行</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-badge badge-removed"></span>
+        <span>删除: <strong id="removedCount">0</strong> 行</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-badge badge-modified"></span>
+        <span>修改: <strong id="modifiedCount">0</strong> 行</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">复制成功！</div>
+
+  <script>
+    const oldCode = `function calculateTotal(items) {
+  let total = 0;
+  for (let i = 0; i < items.length; i++) {
+    total += items[i].price;
+  }
+  return total;
+}
+
+const user = {
+  name: 'John',
+  age: 30
+};
+
+console.log('订单总价:', orderTotal);
+console.log('用户:', user.name);`;
+
+    const newCode = `function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+const user = {
+  name: 'John',
+  age: 30,
+  email: 'john@example.com',
+  country: 'USA'
+};
+
+console.log('订单总价:', orderTotal);
+console.log('用户信息:', user);`;
+
+    // 核心差异算法（简化版LCS）
+    function getDiff(oldLines, newLines) {
+      const diff = [];
+      let i = 0, j = 0;
+
+      while (i < oldLines.length || j < newLines.length) {
+        if (i >= oldLines.length) {
+          diff.push({ type: 'added', oldLine: null, newLine: newLines[j], oldNum: '', newNum: j + 1 });
+          j++;
+        } else if (j >= newLines.length) {
+          diff.push({ type: 'removed', oldLine: oldLines[i], newLine: null, oldNum: i + 1, newNum: '' });
+          i++;
+        } else if (oldLines[i] === newLines[j]) {
+          diff.push({ type: 'unchanged', oldLine: oldLines[i], newLine: newLines[j], oldNum: i + 1, newNum: j + 1 });
+          i++; j++;
+        } else {
+          // 简单判断：向前查找匹配
+          let foundInNew = newLines.indexOf(oldLines[i], j);
+          let foundInOld = oldLines.indexOf(newLines[j], i);
+          
+          if (foundInNew !== -1 && (foundInOld === -1 || foundInNew - j < foundInOld - i)) {
+            diff.push({ type: 'added', oldLine: null, newLine: newLines[j], oldNum: '', newNum: j + 1 });
+            j++;
+          } else if (foundInOld !== -1) {
+            diff.push({ type: 'removed', oldLine: oldLines[i], newLine: null, oldNum: i + 1, newNum: '' });
+            i++;
+          } else {
+            diff.push({ type: 'modified', oldLine: oldLines[i], newLine: newLines[j], oldNum: i + 1, newNum: j + 1 });
+            i++; j++;
+          }
+        }
+      }
+      return diff;
+    }
+
+    // 渲染差异
+    function renderDiff() {
+      const oldLines = oldCode.split('\n');
+      const newLines = newCode.split('\n');
+      const diff = getDiff(oldLines, newLines);
+      console.log(diff);
+
+      let added = 0, removed = 0, modified = 0;
+      
+      let oldHtml = '<div class="code-panel"><div class="panel-header old-header">旧代码</div><div class="code-content">';
+      let newHtml = '<div class="code-panel"><div class="panel-header new-header">新代码</div><div class="code-content">';
+
+      diff.forEach(item => {
+        const oldClass = item.type === 'added' ? 'line-unchanged' : `line-${item.type}`;
+        const newClass = item.type === 'removed' ? 'line-unchanged' : `line-${item.type}`;
+
+        oldHtml += `<div class="line ${oldClass}">
+          <div class="line-num">${item.oldNum}</div>
+          <div class="line-content">${escapeHtml(item.oldLine || '')}</div>
+        </div>`;
+
+        newHtml += `<div class="line ${newClass}">
+          <div class="line-num">${item.newNum}</div>
+          <div class="line-content">${escapeHtml(item.newLine || '')}</div>
+        </div>`;
+
+        if (item.type === 'added') added++;
+        if (item.type === 'removed') removed++;
+        if (item.type === 'modified') modified++;
+      });
+
+      oldHtml += '</div></div>';
+      newHtml += '</div></div>';
+
+      document.getElementById('diffContainer').innerHTML = oldHtml + newHtml;
+      document.getElementById('addedCount').textContent = added;
+      document.getElementById('removedCount').textContent = removed;
+      document.getElementById('modifiedCount').textContent = modified;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function copyCode(type) {
+      const text = type === 'old' ? oldCode : newCode;
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      });
+    }
+
+    function toggleView() {
+      const container = document.getElementById('diffContainer');
+      const isColumn = container.style.gridTemplateColumns === '1fr';
+      container.style.gridTemplateColumns = isColumn ? '1fr 1fr' : '1fr';
+    }
+
+    // 初始化
+    renderDiff();
+  </script>
+</body>
+</html>
