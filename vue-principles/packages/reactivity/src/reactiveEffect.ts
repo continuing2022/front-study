@@ -36,4 +36,4 @@ export function trigger(target,key,newValue,oldValue){
     trackEffects(dep)
   }
 }
-console.log(targetMap)
+// console.log(targetMap)

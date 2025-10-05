@@ -16,7 +16,6 @@ class RefImpl {
   }
   
   get value() {
-    // debugger
     trackRefValue(this)
     return this._value
   }
@@ -30,7 +29,7 @@ class RefImpl {
   }
 }
 
-function trackRefValue(ref) {
+export function trackRefValue(ref) {
   if (!activeEffect) return
   
   // 只在第一次访问时创建依赖集合
@@ -41,7 +40,7 @@ function trackRefValue(ref) {
   trackEffect(activeEffect, ref._deps)
 }
 
-function triggerRefValue(ref) {
+export function triggerRefValue(ref) {
   const dep = ref._deps
   if (!dep) return
   trackEffects(dep)

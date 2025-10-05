@@ -1,6 +1,7 @@
 
-import { mutableHandlers,ReactiveFlags } from "./baseHandle";
+import { mutableHandlers } from "./baseHandle";
 import { isObject } from "@vue/shared"
+import { ReactiveFlags } from "./constants";
 // reactive的实现
 export function reactive(obj){
   const proxy=createReactiveObject(obj);
