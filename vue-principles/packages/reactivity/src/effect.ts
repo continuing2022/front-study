@@ -5,6 +5,7 @@ export function effect(fn,options?){
     _effect.run();
   })
   _effect.run()
+  // 用户配置
   if(options){
     Object.assign(_effect,options)
   }
@@ -19,8 +20,10 @@ function preCleanEffect(effect){
 }
 // 清理依赖
 function cleanDepEffect(effect, dep) {
+  // 从依赖集合中删除该副作用函数
   dep.delete(effect)
   if (dep.size == 0 && typeof dep.cleanup === 'function') {
+    // 从全局的 targetMap 中删除该依赖key
     dep.cleanup()
   }
 }
@@ -34,9 +37,9 @@ function postCleanEffect(effect){
   }
 }
 class ReactiveEffect{
-  _trackId=0
+  _trackId=0 ///effect执行的次数
   deps=[] // 依赖集合
-  _depLength=0
+  _depLength=0 // 依赖集合长度
   _isRunning=false
   public active = true // 是否激活
   constructor(public fn: () => any,public scheduler: () => void){
@@ -50,7 +53,9 @@ class ReactiveEffect{
     let lastEffect = activeEffect
     try {
       activeEffect = this
+      // 将依赖修改
       preCleanEffect(this)
+      // 表示正在运行
       this._isRunning = true
       return this.fn()
     } finally  {
