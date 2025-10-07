@@ -45,3 +45,6 @@ export function triggerRefValue(ref) {
   if (!dep) return
   trackEffects(dep)
 }
+export function isRef(r) {
+  return !!(r && r.__v_isRef === true)
+}
