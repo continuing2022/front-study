@@ -6,3 +6,6 @@ export function isObject(value:any){
 export function isFunction(value:any){
   return typeof value === "function"
 }
+export function isVNode(val){
+  return !!(val&&val._isVNode)
+}
