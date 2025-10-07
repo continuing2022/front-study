@@ -28,6 +28,9 @@ function doWatch(source, cb, options?) {
     oldValue = newVal
   })
   oldValue = effect.run()
+  if(options?.immediate){
+    cb(oldValue, undefined)
+  }
   // 返回停止监听的方法
   return () => effect.active = false
 }
