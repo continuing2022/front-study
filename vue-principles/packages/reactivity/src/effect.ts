@@ -1,4 +1,4 @@
-import { DirtyLevels } from "./constants";
+
 
 export function effect(fn,options?){
   // 保存还未执行的副作用函数
@@ -42,7 +42,7 @@ export class ReactiveEffect{
   deps=[] // 依赖集合
   _depLength=0 // 依赖集合长度
   _isRunning=false
-  _dirtyLevel=DirtyLevels.Dirty //默认是脏的
+  _dirtyLevel=true//默认是脏的
   public active = true // 是否激活
   constructor(public fn: () => any,public scheduler: () => void){
     this.fn = fn
@@ -50,22 +50,22 @@ export class ReactiveEffect{
   }
   // 增加一些辅助函数 当前数据私有
   public get dirty(){
-    return this._dirtyLevel===DirtyLevels.Dirty
+    return this._dirtyLevel
   }
   public set dirty(value: boolean){
     if(value){
-      this._dirtyLevel=DirtyLevels.Dirty
+      this._dirtyLevel=true
     }
   }
   run(){
-    this._dirtyLevel=DirtyLevels.NoDirty
+    this._dirtyLevel=false
     if(!this.active){
       return this.fn()
     }
     let lastEffect = activeEffect
     try {
       activeEffect = this
-      // 将依赖修改
+      // 将依赖初始化
       preCleanEffect(this)
       // 表示正在运行
       this._isRunning = true
@@ -94,14 +94,13 @@ export function trackEffect(effect,dep){
   }else{
     effect._depLength++
   }
-
 }
 // 触发依赖
 export function trackEffects(dep){
   dep.forEach((_,effectId)=>{
     // 当前值不是脏的 就改成脏的
-    if(effectId._dirtyLevel<DirtyLevels.Dirty){
-      effectId._dirtyLevel=DirtyLevels.Dirty
+    if(!effectId._dirtyLevel){
+      effectId._dirtyLevel=true
     }
     if(effectId._isRunning) return
     effectId.scheduler()
