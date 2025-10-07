@@ -78,7 +78,15 @@ export class ReactiveEffect{
     }
   }
   stop(){
-    this.active=false
+    if(this.active){
+      this.active = false
+      // 清理所有依赖集合中的自身引用
+      for(let i = 0; i < this.deps.length; i++){
+        const dep = this.deps[i]
+        dep.delete(this)
+      }
+      this.deps.length = 0
+    }
   }
 }
 // 依赖收集
