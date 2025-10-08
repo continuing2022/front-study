@@ -19,7 +19,7 @@ export function createRenderer(renderOptions) {
     container._vnode = vnode
   }
   // 用于对比新旧节点
-  function patch(n1, n2, container) {
+  function patch(n1, n2, container,anchor=null) {
     if(n1===n2)return ;
     if(n2===null){
       // 删除节点
@@ -33,12 +33,12 @@ export function createRenderer(renderOptions) {
       unmount(n1)
       n1 = null // 设置为null，让后面的逻辑重新挂载n2
     }
-    processElement(n1, n2, container)
+    processElement(n1, n2, container,anchor)
   }
-  function processElement(n1, n2, container){
+  function processElement(n1, n2, container,anchor){
     if(n1===null){
       // 直接渲染
-      mountElement(n2, container)
+      mountElement(n2, container,anchor)
     }else{
       // 说明当前是同一个节点
       patchElement(n1,n2,container)
@@ -62,6 +62,45 @@ export function createRenderer(renderOptions) {
       if(!(key in newProps)){
         // 删除属性
         hostPatchProp(el, key, oldProps[key], null)
+      }
+    }
+  }
+  function patchKeyedChildren(c1,c2,container){
+    let i=0,e1=c1.length-1,e2=c2.length-1
+    // 1.从左侧开始对比
+    while(i<=e1 && i<=e2){
+      const n1 = c1[i]
+      const n2 = c2[i]
+      if(isSameVNode(n1,n2)){
+        // 说明是相同节点 递归更新
+        patch(n1,n2,container)
+      }else{
+        break
+      }
+      i++;
+    }
+    // 2.从右侧开始对比
+    while(i<=e1 && i<=e2){
+      const n1 = c1[e1]
+      const n2 = c2[e2]
+      if(isSameVNode(n1,n2)){
+        // 说明是相同节点 递归更新
+        patch(n1,n2,container)
+      }else{
+        break;
+      }
+      e1--;
+      e2--;
+    }
+    // 增加元素
+    if(i>e1){
+      if(i<=e2){
+        const nextPos = e2+1
+        const anchor = nextPos < c2.length ? c2[nextPos].el : null
+        while(i<=e2){
+          patch(null,c2[i],container,anchor)
+          i++
+        }
       }
     }
   }
@@ -90,7 +129,7 @@ export function createRenderer(renderOptions) {
       // 新的是数组
       if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
         // 老的是数组  全量 diff 算法
-        // patchKeyedChildren(c1,c2,container)
+        patchKeyedChildren(c1,c2,container)
       }else{
         // 老的不是数组 直接清空
         hostSetElementText(container,'')
@@ -115,7 +154,7 @@ export function createRenderer(renderOptions) {
   function unmount(vnode) {
     hostRemove(vnode.el)
   }
-  function mountElement(vnode, container) {
+  function mountElement(vnode, container, anchor=null) {
     // 元素初始化 配置其属性和子节点
     const { props, children, shapeFlag } = vnode
     // 创建元素
@@ -136,7 +175,7 @@ export function createRenderer(renderOptions) {
     }
     vnode.el = el
     // 插入元素
-    hostInsert(el, container)
+    hostInsert(el, container,anchor)
   }
   function mountChildren(children, container) {
     // console.log('mountChildren',children)
