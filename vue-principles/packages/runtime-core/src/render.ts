@@ -102,8 +102,13 @@ export function createRenderer(renderOptions) {
           i++
         }
       }
+    }else if(i>e2){
+      // 删除元素
+      while(i<=e1){
+        unmount(c1[i])
+        i++
+      }
     }
-  }
   function patchChildren(n1,n2,container){
     // 1.新的是文本，老的是数组移除老的；
     // 2.新的是文本，老的也是文本，内容不相同替换
