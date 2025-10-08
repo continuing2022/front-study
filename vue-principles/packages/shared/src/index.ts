@@ -9,3 +9,6 @@ export function isFunction(value:any){
 export function isVNode(val){
   return !!(val&&val._isVNode)
 }
+export function isString(value:any){
+  return typeof value === "string"
+}
