@@ -108,7 +108,45 @@ export function createRenderer(renderOptions) {
         unmount(c1[i])
         i++
       }
+    }else if(i<=e1 && i<=e2){
+      // 中间对比
+      const s1 = i // 老节点的起始位置
+      const s2 = i // 新节点的起始位置
+      // 创建新节点的映射表
+      const keyToNewIndexMap = new Map()
+      for(let i=s2;i<=e2;i++){
+        const nextChild = c2[i]
+        keyToNewIndexMap.set(nextChild.key,i)
+      }
+      // 循环老节点，查看节点是否存在
+      for(let i=s1;i<=e1;i++){
+        const prevChild = c1[i]
+        let newIndex = keyToNewIndexMap.get(prevChild.key)
+        if(newIndex===undefined){
+          // 老节点在新节点中不存在 需要删除
+          unmount(prevChild)
+        }else{
+          // 如果存在 就先更新节点内部的差异
+          patch(prevChild,c2[newIndex],container)
+        }
+      }
+      // 需要移动和新增的逻辑
+      const toBePatched = e2 - s2 + 1 // 需要更新的节点数量
+      for(let i=toBePatched-1;i>=0;i--){
+        let newIndex=s2+i
+        let anchor = newIndex + 1 < c2.length ? c2[newIndex + 1].el : null
+        let nextChild=c2[newIndex]
+        debugger
+        if(!nextChild?.el){
+          // 说明是新增的 
+          patch(null,nextChild,container,anchor)
+        }else{
+          hostInsert(nextChild.el,container,anchor) // 移动位置
+        }
+      }
     }
+  
+  }
   function patchChildren(n1,n2,container){
     // 1.新的是文本，老的是数组移除老的；
     // 2.新的是文本，老的也是文本，内容不相同替换
@@ -151,6 +189,7 @@ export function createRenderer(renderOptions) {
       }
     }
   }
+  // 移除子节点
   function unmountChildren(children) {
     for (let i = 0; i < children.length; i++) {
       unmount(children[i])
@@ -159,6 +198,7 @@ export function createRenderer(renderOptions) {
   function unmount(vnode) {
     hostRemove(vnode.el)
   }
+  // 挂载元素
   function mountElement(vnode, container, anchor=null) {
     // 元素初始化 配置其属性和子节点
     const { props, children, shapeFlag } = vnode
