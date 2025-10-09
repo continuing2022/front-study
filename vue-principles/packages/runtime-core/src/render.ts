@@ -1,5 +1,6 @@
 import { ShapeFlags } from "@vue/shared"
 import { isSameVNode } from "./createNode"
+import { lengthOfLIS } from "./lengthOfLIS.js"
 
 export function createRenderer(renderOptions) {
   const {
@@ -21,6 +22,7 @@ export function createRenderer(renderOptions) {
   // 用于对比新旧节点
   function patch(n1, n2, container,anchor=null) {
     if(n1===n2)return ;
+    // 说明是需要删除的节点
     if(n2===null){
       // 删除节点
       if(container._vnode){
@@ -28,11 +30,13 @@ export function createRenderer(renderOptions) {
       }
       return 
     }
+    // 当前n1和n2不是同一个节点
     if(n1&&!isSameVNode(n1,n2)){
       // 说明当前n1和n2不是同一个节点 需要删除n1重新挂载n2
       unmount(n1)
       n1 = null // 设置为null，让后面的逻辑重新挂载n2
     }
+    // 处理元素
     processElement(n1, n2, container,anchor)
   }
   function processElement(n1, n2, container,anchor){
@@ -52,6 +56,7 @@ export function createRenderer(renderOptions) {
     patchProps(el,oldProps,newProps)
     patchChildren(n1,n2,el)
   }
+  // 更新属性
   function patchProps(el,oldProps,newProps){
     // 1.更新新的属性
     for(const key in newProps){
@@ -65,6 +70,50 @@ export function createRenderer(renderOptions) {
       }
     }
   }
+  // 更新子节点
+  function patchChildren(n1,n2,container){
+    // 1.新的是文本，老的是数组移除老的；
+    // 2.新的是文本，老的也是文本，内容不相同替换
+    // 3.老的是数组，新的是数组，全量 diff 算法
+    // 4.老的是数组，新的不是数组，移除老的子节点
+    // 5.老的是文本，新的是空
+    // 6.老的是文本，新的是数组
+    const c1 = n1.children
+    const c2 = n2.children
+    const prevShapeFlag = n1.shapeFlag
+    const shapeFlag = n2.shapeFlag
+    if(shapeFlag & ShapeFlags.TEXT_CHILDREN){
+      // 新的是文本
+      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
+        // 老的是数组 移除老的
+        unmountChildren(n1.children)
+      }
+      if(c1!==c2){
+        // 说明内容不一样
+        hostSetElementText(container,c2)
+      }
+    }else if(shapeFlag & ShapeFlags.ARRAY_CHILDREN){
+      // 新的是数组
+      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
+        // 老的是数组  全量 diff 算法
+        patchKeyedChildren(c1,c2,container)
+      }else{
+        // 老的不是数组 直接清空
+        hostSetElementText(container,'')
+        mountChildren(c2,container)
+      }
+    }else {
+      // 新的不是数组
+      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
+        // 老的是数组 移除老的
+        unmountChildren(n1.children)
+      }else if(prevShapeFlag & ShapeFlags.TEXT_CHILDREN){
+        // 老的是文本 清空内容
+        hostSetElementText(container,'')
+      }
+    }
+  }
+  // 双指针和映射表实现
   function patchKeyedChildren(c1,c2,container){
     let i=0,e1=c1.length-1,e2=c2.length-1
     // 1.从左侧开始对比
@@ -112,80 +161,85 @@ export function createRenderer(renderOptions) {
       // 中间对比
       const s1 = i // 老节点的起始位置
       const s2 = i // 新节点的起始位置
-      // 创建新节点的映射表
+      // 创建新节点的映射表 key -> index
       const keyToNewIndexMap = new Map()
       for(let i=s2;i<=e2;i++){
         const nextChild = c2[i]
-        keyToNewIndexMap.set(nextChild.key,i)
+        if(nextChild.key != null) {
+          keyToNewIndexMap.set(nextChild.key, i)
+        }
       }
-      // 循环老节点，查看节点是否存在
-      for(let i=s1;i<=e1;i++){
+      
+      // 需要处理的新节点数量
+      const toBePatched = e2 - s2 + 1
+      let patched = 0
+      
+      // 创建新索引到老索引的映射表
+      const newIndexToOldIndexMap = new Array(toBePatched).fill(0)
+      
+      // 标记是否需要移动
+      let moved = false
+      let maxNewIndexSoFar = 0
+      
+      // 循环老节点，查看节点是否存在于新节点中
+      for(let i = s1; i <= e1; i++){
         const prevChild = c1[i]
-        let newIndex = keyToNewIndexMap.get(prevChild.key)
-        if(newIndex===undefined){
-          // 老节点在新节点中不存在 需要删除
+        if(patched >= toBePatched) {
+          // 已经处理完所有新节点，剩余的老节点都需要删除
           unmount(prevChild)
-        }else{
-          // 如果存在 就先更新节点内部的差异
-          patch(prevChild,c2[newIndex],container)
+          continue
+        }
+        let newIndex
+        if(prevChild.key != null) {
+          newIndex = keyToNewIndexMap.get(prevChild.key)
+        } else {
+          // 没有key的情况，需要遍历查找
+          for(let j = s2; j <= e2; j++){
+            if(newIndexToOldIndexMap[j - s2] === 0 && isSameVNode(prevChild, c2[j])){
+              newIndex = j
+              break
+            }
+          }
+        }
+        if(newIndex === undefined){
+          // 老节点在新节点中不存在，需要删除
+          unmount(prevChild)
+        } else {
+          // 建立新索引到老索引的映射关系
+          newIndexToOldIndexMap[newIndex - s2] = i + 1 // +1是为了避免0的情况
+          
+          // 判断是否需要移动
+          if(newIndex >= maxNewIndexSoFar) {
+            maxNewIndexSoFar = newIndex
+          } else {
+            moved = true
+          }
+          // 递归更新节点
+          patch(prevChild, c2[newIndex], container)
+          patched++
         }
       }
-      // 需要移动和新增的逻辑
-      const toBePatched = e2 - s2 + 1 // 需要更新的节点数量
-      for(let i=toBePatched-1;i>=0;i--){
-        let newIndex=s2+i
-        let anchor = newIndex + 1 < c2.length ? c2[newIndex + 1].el : null
-        let nextChild=c2[newIndex]
-        debugger
-        if(!nextChild?.el){
-          // 说明是新增的 
-          patch(null,nextChild,container,anchor)
-        }else{
-          hostInsert(nextChild.el,container,anchor) // 移动位置
+      // 使用最长递增子序列优化移动
+      const increasingNewIndexSequence = moved ? lengthOfLIS(newIndexToOldIndexMap) : []
+      let j = increasingNewIndexSequence.length - 1
+      debugger
+      // 从后往前遍历，确保插入位置正确
+      for(let i = toBePatched - 1; i >= 0; i--){
+        const nextIndex = s2 + i
+        const nextChild = c2[nextIndex]
+        const anchor = nextIndex + 1 < c2.length ? c2[nextIndex + 1].el : null
+        
+        if(newIndexToOldIndexMap[i] === 0){
+          // 新增节点
+          patch(null, nextChild, container, anchor)
+        } else if(moved) {
+          // 需要移动：如果不在最长递增子序列中，则需要移动
+          if(j < 0 || i !== increasingNewIndexSequence[j]){
+            hostInsert(nextChild.el, container, anchor)
+          } else {
+            j--
+          }
         }
-      }
-    }
-  
-  }
-  function patchChildren(n1,n2,container){
-    // 1.新的是文本，老的是数组移除老的；
-    // 2.新的是文本，老的也是文本，内容不相同替换
-    // 3.老的是数组，新的是数组，全量 diff 算法
-    // 4.老的是数组，新的不是数组，移除老的子节点
-    // 5.老的是文本，新的是空
-    // 6.老的是文本，新的是数组
-    const c1 = n1.children
-    const c2 = n2.children
-    const prevShapeFlag = n1.shapeFlag
-    const shapeFlag = n2.shapeFlag
-    if(shapeFlag & ShapeFlags.TEXT_CHILDREN){
-      // 新的是文本
-      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
-        // 老的是数组 移除老的
-        unmountChildren(n1.children)
-      }
-      if(c1!==c2){
-        // 说明内容不一样
-        hostSetElementText(container,c2)
-      }
-    }else if(shapeFlag & ShapeFlags.ARRAY_CHILDREN){
-      // 新的是数组
-      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
-        // 老的是数组  全量 diff 算法
-        patchKeyedChildren(c1,c2,container)
-      }else{
-        // 老的不是数组 直接清空
-        hostSetElementText(container,'')
-        mountChildren(c2,container)
-      }
-    }else {
-      // 新的不是数组
-      if(prevShapeFlag & ShapeFlags.ARRAY_CHILDREN){
-        // 老的是数组 移除老的
-        unmountChildren(n1.children)
-      }else if(prevShapeFlag & ShapeFlags.TEXT_CHILDREN){
-        // 老的是文本 清空内容
-        hostSetElementText(container,'')
       }
     }
   }
