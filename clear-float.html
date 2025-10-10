@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container{
+      border: 1px solid black;
+      /* 方法一计算高度 但是后面正常的box会被box1覆盖 */
+      /* height: 60px; */
+      /* 第二种方法 开启BFC 但是后面正常的box会被box1覆盖且会被隐藏 */
+      /* overflow: hidden; */
+    }
+    .box6{
+      /* 方法三 在正常文档流中清除浮动 或者创建一个全新的空标签*/
+      clear: both;
+      background-color: lightgreen;
+    }
+    /* 第四种方法 使用伪元素清除浮动 */
+    .container::after{
+      /* 因为伪类元素可能是行级元素,但是消除浮动必须是块级元素 */
+      content: "";
+      display: table;
+      clear: both;
+    }
+    .box{
+      width: 50px;
+      height: 50px;
+      background-color: lightblue;
+      margin: 5px;
+      text-align: center;
+      line-height: 50px;
+    }
+    .box1,.box2,.box3,.box4,.box5{
+      float: left;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="box box1">1</div>
+    <div class="box box2">2</div>
+    <div class="box box3">3</div>
+    <div class="box box4">4</div>
+    <div class="box box5">5</div>
+    <!-- <div class="box box6">6</div> -->
+  </div>
+  <p>《蜡笔小新》（日语：クレヨンしんちゃん，英语：Crayon Shin-chan）是臼井仪人创作的漫画作品。漫画以日本埼玉县春日部市一名5岁男童野原新之助的日常生活展开。
+    此漫画于1990年在周末《漫画Action》开始连载，2000年移至月刊《Manga Town》连载。2009年9月11日，臼井仪人因登山意外身亡，本漫画成为未完成之遗作；其后于2010年由长期协助臼井仪人的助手组成的“臼井仪人
+    ＆UY Studio”续载，并取名为《新蜡笔小新》（新クレヨンしんちゃん）[1]。1992年开始由SHIN-EI动画制作电视动画，在朝日电视台播出。并于1993年开始由东宝制作，每年播出一部电影版。
+    在其动画和漫画上臼井仪人旁均提有“らくだ社（骆驼社）”字样，据知是臼井自行设立的公司[2]。至今，动画版已有超过30种语言配音，并已连续放送32年（2024年）。</p>
+</body>
+</html>
