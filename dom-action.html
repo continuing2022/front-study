@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const app=document.querySelector('#app');
+    app.innerText="hello world";//innerText不会解析html标签
+    app.innerHTML=`
+      <div style="width: 200px; height: 100px; background:
+      lightblue; float: left; margin-right: 10px;">Box 1</div>
+      <div style="width: 200px; height: 100px; background: lightgreen; float: left; margin-right: 10px;">Box 2</div>`
+    // createElement 创建元素
+    const h1=document.createElement('h1');
+    h1.innerText="This is a heading";
+    // appendChild 添加子元素
+    app.appendChild(h1);
+    // removeChild 删除子元素
+    setTimeout(()=>{
+      app.removeChild(h1);
+    },2000)
+  </script>
+</body>
+</html>
