@@ -27,6 +27,7 @@
     "@babel/core": "^7.28.0",
     "@babel/plugin-transform-block-scoping": "^7.28.0",
     "babel-preset-env": "^1.7.0",
+    "express": "^5.1.0",
     "webpack-dev-server": "^5.2.2"
   }
 }

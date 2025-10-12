@@ -2,6 +2,7 @@ const path = require('path');
 const FileStatisticsPlugin = require('./src/FileStatisticsPlugin.cjs');
 const DependencyAnalyzerPlugin = require('./src/DependencyAnalyzerPlugin.cjs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
   mode: 'development',
   optimization:{
@@ -23,6 +24,20 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|jpeg)$/i,
         type: 'asset/resource'
+      }
+    ]
+  },
+  devServer: {
+    port: 8080,
+    hot: true,
+    open: true,
+    proxy: [
+      {
+        context: ['/user', '/api'], // 需要代理的路径
+        target: 'http://localhost:3001', // 目标服务器改为 3001
+        changeOrigin: true, // 改变origin头为目标URL
+        secure: false, // 如果是https接口，需要配置这个参数
+        logLevel: 'debug', // 显示代理日志
       }
     ]
   },
