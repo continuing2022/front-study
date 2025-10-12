@@ -1,6 +1,7 @@
 const path = require('path');
 const FileStatisticsPlugin = require('./src/FileStatisticsPlugin.cjs');
 const DependencyAnalyzerPlugin = require('./src/DependencyAnalyzerPlugin.cjs');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'development',
   optimization:{
@@ -31,6 +32,10 @@ module.exports = {
     }),
     new DependencyAnalyzerPlugin({
       outputFile: 'dependency-analysis.json' // 可以自定义输出文件名
+    }),
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html'
     })
   ]
 };
