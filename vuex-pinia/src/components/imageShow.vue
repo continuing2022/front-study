@@ -3,7 +3,7 @@
   <div class="img-list">
     <div v-for="img in images" :key="img" class="img-item">
       <img
-        v-image-lazy="img"
+        v-image="img"
         :alt="img.split('/').pop()"
         :src="placeholder"
         class="lazy-img"

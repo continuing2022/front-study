@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import App from "./App.vue";
 import router from "./router";
 import imageLazy from './directives/imageLazy';
+import image from "./directives/image";
 import i18n from "./i18n";
 // 导入 Vuex store
 import store from "./store-vuex";
@@ -18,6 +19,7 @@ app.use(store);
 app.use(i18n);
 app.use(ElementPlus)
 app.directive('imageLazy', imageLazy);
+app.directive('image', image);
 // 挂载 Pinia
 app.use(createPinia());
 
