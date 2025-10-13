@@ -13,6 +13,11 @@ export default defineConfig({
   optimizeDeps: {
     include: ['monaco-editor']
   },
+  resolve:{
+    alias:{
+      '@': resolve(__dirname, 'src')
+    }
+  },
   build: {
     rollupOptions: {
       output: {

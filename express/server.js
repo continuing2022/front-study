@@ -6,7 +6,7 @@ const path = require('path');
 // 创建 Express 应用
 const app = express();
 const port = process.env.PORT || 3000;
-
+const imageBaseUrl = 'https://w.wallhaven.cc/full/k8/wallhaven-k8xw2q.png';
 // 中间件配置
 app.use(cors()); // 解决跨域问题
 app.use(bodyParser.json()); // 解析 JSON 请求体
@@ -47,32 +47,17 @@ app.get('/users/:id', (req, res) => {
   });
 });
 
-// 创建用户
-app.post('/users', (req, res) => {
-  const { name, age, email } = req.body;
-  
-  if (!name || !age) {
-    return res.status(400).json({
-      success: false,
-      message: '姓名和年龄是必填项'
-    });
+app.post('/postImages',(req,res)=>{
+  const {pageSize} = req.body;
+  const images = [];
+  for(let i=0;i<pageSize;i++){
+    images.push(imageBaseUrl);
   }
-  
-  const newUser = {
-    id: Date.now(),
-    name,
-    age,
-    email: email || '',
-    createdAt: new Date().toISOString()
-  };
-  
-  res.status(201).json({
+  res.json({
     success: true,
-    data: newUser,
-    message: '用户创建成功'
+    data: images
   });
 });
-
 
 
 

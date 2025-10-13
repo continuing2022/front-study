@@ -1,99 +1,80 @@
 <template>
-  <div class="comparison-table">
-    <h2>📊 详细对比</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>特性</th>
-          <th>Vuex</th>
-          <th>Pinia</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>TypeScript 支持</td>
-          <td>需要额外配置</td>
-          <td>原生支持，类型推断优秀</td>
-        </tr>
-        <tr>
-          <td>代码结构</td>
-          <td>单一 store，需要 modules</td>
-          <td>多个独立 stores</td>
-        </tr>
-        <tr>
-          <td>Mutations</td>
-          <td>必须通过 mutations 修改状态</td>
-          <td>可直接修改状态</td>
-        </tr>
-        <tr>
-          <td>异步操作</td>
-          <td>Actions</td>
-          <td>Actions（更简洁）</td>
-        </tr>
-        <tr>
-          <td>DevTools</td>
-          <td>Vue DevTools</td>
-          <td>Vue DevTools（更好的体验）</td>
-        </tr>
-        <tr>
-          <td>包大小</td>
-          <td>较大</td>
-          <td>更小，按需加载</td>
-        </tr>
-        <tr>
-          <td>学习曲线</td>
-          <td>概念较多</td>
-          <td>更简单直观</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="comparison-table" @scroll="handleScroll" ref="scrollContainer">
+    <img
+      v-for="(image, index) in imageList"
+      :key="index"
+      v-image="image"
+      alt="图片"
+      class="image-item"
+    />
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const menu = ['fengjian', 'dai', 'guangzhi', 'meiya', 'nini']
+const imageList = ref([])
+const scrollContainer = ref(null)
+const loading = ref(false)
+
+function getImageRandom(pageSize = 12) {
+  const result = []
+  for (let i = 0; i < pageSize; i++) {
+    const index = Math.floor(Math.random() * menu.length)
+    result.push(`/images/${menu[index]}.png`)
+  }
+  return result
+}
+
+async function getImageList() {
+  if (loading.value) return
+  loading.value = true
+  
+  const res = await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ data: getImageRandom(20) })
+    }, 500)
+  })
+  imageList.value.push(...res.data)
+  loading.value = false
+}
+
+function handleScroll() {
+  const container = scrollContainer.value
+  if (!container) return
+  
+  const scrollTop = container.scrollTop //滑动高度
+  const scrollHeight = container.scrollHeight //内容高度
+  const clientHeight = container.clientHeight //容器高度
+  console.log(scrollTop, scrollHeight, clientHeight)
+  
+  if (scrollTop + clientHeight >= scrollHeight - 50) {
+    getImageList()
+  }
+}
+
+onMounted(() => {
+  getImageList()
+})
+</script>
+
 <style scoped>
 .comparison-table {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
+  max-width: 800px;
+  max-height: 600px;
+  overflow: scroll;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  margin: 0 auto;
 }
-
-.comparison-table h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background: #f8f9fa;
-  font-weight: bold;
-  color: #333;
-}
-
-tr:hover {
-  background: #f8f9fa;
-}
-
-@media (max-width: 768px) {
-  table {
-    font-size: 14px;
-  }
-  
-  th, td {
-    padding: 10px;
-  }
+.image-item {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
 }
 </style>

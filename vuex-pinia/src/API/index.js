@@ -11,3 +11,6 @@ export const getUserById = (id) => {
 export const createUser = (userData) => {
   return baseUrl.post('/users', userData);
 };
+export const postImages = (pageSize) => {
+  return baseUrl.post('/postImages', { pageSize });
+};
