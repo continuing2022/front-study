@@ -15,6 +15,11 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'), // 使用 path.resolve 更规范
   },  
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')  // 让 @ 指向 src 目录
+    },
+  },
   module: {
     rules: [
       {
