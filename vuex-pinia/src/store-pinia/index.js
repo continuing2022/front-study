@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed, readonly } from 'vue'
+import { getUserById } from "../API";
 // 计数器 Store (Options API 风格)
 export const useCounterStore = defineStore("counter", {
   state: () => ({
@@ -43,13 +44,14 @@ export const useUserStore = defineStore("user", () => {
     user.value = { name: '', email: '' }
   }
   
-  const fetchUser = async (userId) => {
+  const fetchUser = async (id) => {
     try {
       // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 500))
+      const data=await getUserById(id)
+      const { name, email } = data.data.data
       const userData = {
-        name: `用户${userId}`,
-        email: `user${userId}@example.com`
+        name,
+        email
       }
       setUser(userData)
       return userData

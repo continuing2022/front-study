@@ -17,13 +17,13 @@ app.use(express.static(path.join(__dirname, 'public'))); // 静态文件服务
 app.get('/', (req, res) => {
   res.json({
     message: 'Express 服务器运行成功！',
-    timestamp: new Date().toISOString(), 
+    timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
 });
 
 // 用户相关 API
-app.get('/api/users', (req, res) => {
+app.get('/users', (req, res) => {
   const users = [
     { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com' },
     { id: 2, name: '李四', age: 30, email: 'lisi@example.com' },
@@ -37,9 +37,9 @@ app.get('/api/users', (req, res) => {
 });
 
 // 获取单个用户
-app.get('/api/users/:id', (req, res) => {
+app.get('/users/:id', (req, res) => {
   const userId = parseInt(req.params.id);
-  const user = { id: userId, name: `用户${userId}`, age: 25 + userId };
+  const user = { id: userId, name: `用户${userId}`, age: 25 + userId,email:`user${userId}@example.com` };
   
   res.json({
     success: true,
@@ -48,7 +48,7 @@ app.get('/api/users/:id', (req, res) => {
 });
 
 // 创建用户
-app.post('/api/users', (req, res) => {
+app.post('/users', (req, res) => {
   const { name, age, email } = req.body;
   
   if (!name || !age) {
@@ -73,44 +73,8 @@ app.post('/api/users', (req, res) => {
   });
 });
 
-// 更新用户
-app.put('/api/users/:id', (req, res) => {
-  const userId = parseInt(req.params.id);
-  const { name, age, email } = req.body;
-  
-  const updatedUser = {
-    id: userId,
-    name: name || `用户${userId}`,
-    age: age || 25,
-    email: email || '',
-    updatedAt: new Date().toISOString()
-  };
-  
-  res.json({
-    success: true,
-    data: updatedUser,
-    message: '用户更新成功'
-  });
-});
 
-// 删除用户
-app.delete('/api/users/:id', (req, res) => {
-  const userId = parseInt(req.params.id);
-  
-  res.json({
-    success: true,
-    message: `用户 ${userId} 删除成功`
-  });
-});
 
-// 健康检查
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
-  });
-});
 
 // 404 处理
 app.use('*', (req, res) => {

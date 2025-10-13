@@ -8,9 +8,9 @@
       <p>当前计数: <strong>{{ counterStore.count }}</strong></p>
       <p>双倍值: <strong>{{ counterStore.double }}</strong></p>
       <div class="button-group">
-        <button @click="counterStore.increment">+1</button>
-        <button @click="counterStore.decrement">-1</button>
-        <button @click="asyncIncrement" :disabled="loading">
+        <button class="button-style" @click="counterStore.increment">+1</button>
+        <button class="button-style" @click="counterStore.decrement">-1</button>
+        <button class="button-style" @click="asyncIncrement" :disabled="loading">
           {{ loading ? '异步+1中...' : '异步+1' }}
         </button>
       </div>
@@ -22,12 +22,12 @@
       <div v-if="userStore.isLoggedIn">
         <p>姓名: {{ userStore.user.name }}</p>
         <p>邮箱: {{ userStore.user.email }}</p>
-        <button @click="userStore.clearUser">退出登录</button>
+        <button style="margin-top: 10px;" class="button-style" @click="userStore.clearUser">退出登录</button>
       </div>
       <div v-else>
         <p>未登录</p>
       </div>
-      <button @click="fetchUser" :disabled="userLoading">
+      <button style="margin-top: 10px;" class="button-style" @click="fetchUser" :disabled="userLoading">
         {{ userLoading ? '获取中...' : '获取用户信息' }}
       </button>
     </div>
@@ -41,7 +41,7 @@
           @keyup.enter="addTodo"
           placeholder="输入新的待办事项"
         >
-        <button @click="addTodo">添加</button>
+        <button class="button-style" @click="addTodo">添加</button>
       </div>
       
       <div class="todo-stats">
@@ -99,7 +99,7 @@ const asyncIncrement = async () => {
 const fetchUser = async () => {
   userLoading.value = true
   try {
-    await userStore.fetchUser(Math.floor(Math.random() * 100))
+    await userStore.fetchUser(1)
   } finally {
     userLoading.value = false
   }
@@ -132,7 +132,7 @@ const addTodo = () => {
   margin-top: 10px;
 }
 
-.button-group button {
+.button-style{
   margin-right: 10px;
   padding: 8px 16px;
   background: #ffd859;
@@ -142,12 +142,11 @@ const addTodo = () => {
   cursor: pointer;
   font-weight: bold;
 }
-
-.button-group button:hover:not(:disabled) {
+.button-style:hover:not(:disabled) {
   background: #ffcd3c;
 }
 
-.button-group button:disabled {
+.button-style:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
