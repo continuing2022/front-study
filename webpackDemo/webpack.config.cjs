@@ -1,8 +1,7 @@
 const path = require('path');
-const FileStatisticsPlugin = require('./src/FileStatisticsPlugin.cjs');
-const DependencyAnalyzerPlugin = require('./src/DependencyAnalyzerPlugin.cjs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const FileSizePlugin = require('./src/plugin/FileSizePlugin.cjs');
+const BuildTimePlugin = require('./src/plugin/BuildTimePlugin.cjs');
 module.exports = {
   mode: 'development',
   optimization:{
@@ -47,15 +46,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new FileStatisticsPlugin({
-      outputFile: 'file-statistics.json' // 可以自定义输出文件名
-    }),
-    new DependencyAnalyzerPlugin({
-      outputFile: 'dependency-analysis.json' // 可以自定义输出文件名
-    }),
     new HtmlWebpackPlugin({
       template: './index.html',
       filename: 'index.html'
-    })
+    }),
+    new FileSizePlugin(),
+    new BuildTimePlugin()
   ]
 };
