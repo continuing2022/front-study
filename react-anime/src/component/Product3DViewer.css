@@ -1,0 +1,93 @@
+.viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.viewer-panel {
+  position: relative;
+  width: 80vw;
+  height: 80vh;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.viewer-panel .close-btn {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 10;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.viewer-panel .title {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  color: #fff;
+  z-index: 10;
+  font-size: 14px;
+}
+
+.viewer-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loading-overlay,
+.error-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 17, 17, 0.9);
+  color: #fff;
+  z-index: 5;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 16px;
+}
+
+.controls-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  z-index: 10;
+}
