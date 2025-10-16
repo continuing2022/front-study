@@ -108,57 +108,6 @@ export default function Product3DViewer({ product, onClose  }) {
       rafRef.current = requestAnimationFrame(animate)
     }
     rafRef.current = requestAnimationFrame(animate)
-
-    // 响应式尺寸
-    const handleResize = () => {
-      const w = container.clientWidth
-      const h = container.clientHeight
-      camera.aspect = w / h
-      camera.updateProjectionMatrix()
-      renderer.setSize(w, h)
-    }
-    window.addEventListener('resize', handleResize)
-
-    // 清理
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('resize', handleResize)
-
-      // 清理控制器
-      if (controls) {
-        controls.dispose()
-      }
-      // 删除场景中的对象并释放几何体/材质
-      try {
-        scene.traverse((obj) => {
-          if (obj.isMesh) {
-            if (obj.geometry) obj.geometry.dispose()
-            if (obj.material) {
-              if (Array.isArray(obj.material)) {
-                obj.material.forEach((m) => m.dispose && m.dispose())
-              } else {
-                obj.material.dispose && obj.material.dispose()
-              }
-            }
-          }
-        })
-      } catch (e) {
-        // ignore
-      }
-
-      // 释放渲染器上下文
-      try {
-        renderer.forceContextLoss && renderer.forceContextLoss()
-      } catch (e) {}
-      try {
-        renderer.dispose && renderer.dispose()
-      } catch (e) {}
-
-      // 移除 canvas
-      if (renderer.domElement && renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement)
-      }
-    }
   }, [product, product.color])
 
   return (
