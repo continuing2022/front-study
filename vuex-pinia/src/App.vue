@@ -122,17 +122,6 @@ const onChangeLang = (val) => {
   margin-bottom: 40px;
 }
 
-.content.both {
-  grid-template-columns: 1fr 1fr;
-}
-
-.content.vuex,
-.content.pinia {
-  grid-template-columns: 1fr;
-  max-width: 600px;
-  margin: 0 auto 40px;
-}
-
 .demo-section {
   background: white;
   border-radius: 12px;

@@ -8,9 +8,9 @@
       <p>当前计数: <strong>{{ count }}</strong></p>
       <p>双倍值: <strong>{{ double }}</strong></p>
       <div class="button-group">
-        <button @click="onAdd">+1</button>
-        <button @click="onDecrement">-1</button>
-        <button @click="asyncIncrement" :disabled="loading">
+        <button class="button-style" @click="onAdd">+1</button>
+        <button class="button-style" @click="onDecrement">-1</button>
+        <button class="button-style" @click="asyncIncrement" :disabled="loading">
           {{ loading ? '异步+1中...' : '异步+1' }}
         </button>
       </div>
@@ -26,7 +26,7 @@
       <div v-else>
         <p>未登录</p>
       </div>
-      <button @click="fetchUser" :disabled="userLoading">
+      <button style="margin-top: 10px;" class="button-style" @click="fetchUser" :disabled="userLoading">
         {{ userLoading ? '获取中...' : '获取用户信息' }}
       </button>
     </div>
@@ -40,7 +40,7 @@
           @keyup.enter="addTodo"
           placeholder="输入新的待办事项"
         >
-        <button @click="addTodo">添加</button>
+        <button class="button-style" @click="addTodo">添加</button>
       </div>
       
       <div class="todo-stats">
@@ -156,7 +156,7 @@ export default {
   margin-top: 10px;
 }
 
-.button-group button {
+.button-style {
   margin-right: 10px;
   padding: 8px 16px;
   background: #42b883;
@@ -166,11 +166,11 @@ export default {
   cursor: pointer;
 }
 
-.button-group button:hover:not(:disabled) {
+.button-style:hover:not(:disabled) {
   background: #369870;
 }
 
-.button-group button:disabled {
+.button-style:disabled {
   background: #ccc;
   cursor: not-allowed;
 }

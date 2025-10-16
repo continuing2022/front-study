@@ -1,99 +1,324 @@
 <template>
-  <div class="comparison-table">
-    <h2>📊 详细对比</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>特性</th>
-          <th>Vuex</th>
-          <th>Pinia</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>TypeScript 支持</td>
-          <td>需要额外配置</td>
-          <td>原生支持，类型推断优秀</td>
-        </tr>
-        <tr>
-          <td>代码结构</td>
-          <td>单一 store，需要 modules</td>
-          <td>多个独立 stores</td>
-        </tr>
-        <tr>
-          <td>Mutations</td>
-          <td>必须通过 mutations 修改状态</td>
-          <td>可直接修改状态</td>
-        </tr>
-        <tr>
-          <td>异步操作</td>
-          <td>Actions</td>
-          <td>Actions（更简洁）</td>
-        </tr>
-        <tr>
-          <td>DevTools</td>
-          <td>Vue DevTools</td>
-          <td>Vue DevTools（更好的体验）</td>
-        </tr>
-        <tr>
-          <td>包大小</td>
-          <td>较大</td>
-          <td>更小，按需加载</td>
-        </tr>
-        <tr>
-          <td>学习曲线</td>
-          <td>概念较多</td>
-          <td>更简单直观</td>
-        </tr>
-      </tbody>
-    </table>
+  <div 
+    class="pull-refresh-container"
+    @scroll="handleScroll"
+    @mousedown="handleMouseDown"
+    @mousemove="handleMouseMove"
+    @mouseup="handleMouseUp"
+    ref="scrollContainer"
+  >
+    <!-- 下拉刷新指示器 -->
+    <div 
+      class="pull-refresh-indicator" 
+      :class="{ 'refreshing': isRefreshing, 'can-refresh': canRefresh }"
+      :style="{ transform: `translateY(${pullDistance}px)` }"
+    >
+      <div class="refresh-icon" :class="{ 'rotating': isRefreshing }">
+        {{ isRefreshing ? '🔄' : (canRefresh ? '↑' : '↓') }}
+      </div>
+      <div class="refresh-text">
+        {{ refreshText }}
+      </div>
+    </div>
+
+    <!-- 图片容器 -->
+    <div 
+      class="comparison-table" 
+      :style="{ transform: `translateY(${pullDistance}px)` }"
+    >
+      <img
+        v-for="(image, index) in imageList"
+        :key="index"
+        :src="image"
+        alt="图片"
+        class="image-item"
+      />
+      
+      <!-- 加载状态 -->
+      <div v-if="loading && !isRefreshing" class="loading-indicator">
+        <div class="loading-spinner">⏳</div>
+        <div>{{ isLoadingMore ? '加载更多...' : '加载中...' }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.comparison-table {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+
+const menu = ['fengjian', 'dai', 'guangzhi', 'meiya', 'nini']
+const imageList = ref([])
+const scrollContainer = ref(null)
+const loading = ref(false)
+
+// 下拉刷新相关状态
+const pullDistance = ref(0)
+const isRefreshing = ref(false)
+const isPulling = ref(false)
+const startY = ref(0)
+const currentY = ref(0)
+const isMouseDown = ref(false)
+const isLoadingMore = ref(false)
+
+// 下拉刷新配置
+const PULL_THRESHOLD = 60 // 触发刷新的阈值
+const MAX_PULL_DISTANCE = 100 // 最大下拉距离
+
+// 计算属性
+const canRefresh = computed(() => pullDistance.value >= PULL_THRESHOLD)
+
+const refreshText = computed(() => {
+  if (isRefreshing.value) return '正在刷新...'
+  if (canRefresh.value) return '松开刷新'
+  return '下拉刷新'
+})
+
+function getImageRandom(pageSize = 12) {
+  const result = []
+  for (let i = 0; i < pageSize; i++) {
+    const index = Math.floor(Math.random() * menu.length)
+    result.push(`/images/${menu[index]}.png`)
+  }
+  return result
 }
 
-.comparison-table h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background: #f8f9fa;
-  font-weight: bold;
-  color: #333;
-}
-
-tr:hover {
-  background: #f8f9fa;
-}
-
-@media (max-width: 768px) {
-  table {
-    font-size: 14px;
+async function getImageList(isRefresh = false) {
+  if (loading.value && !isRefresh) return
+  loading.value = true
+  
+  // 区分刷新和加载更多
+  if (!isRefresh) {
+    isLoadingMore.value = true
   }
   
-  th, td {
+  const res = await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ data: getImageRandom(20) })
+    }, 500)
+  })
+  
+  if (isRefresh) {
+    // 刷新时替换数据
+    imageList.value = res.data
+  } else {
+    // 加载更多时追加数据
+    imageList.value.push(...res.data)
+  }
+  
+  loading.value = false
+  isLoadingMore.value = false
+}
+
+// 滚动事件处理（无限滚动）
+function handleScroll() {
+  const container = scrollContainer.value
+  if (!container || isRefreshing.value) return
+  
+  const scrollTop = container.scrollTop //滑动高度
+  const scrollHeight = container.scrollHeight //内容高度
+  const clientHeight = container.clientHeight //容器高度
+  
+  if (scrollTop + clientHeight >= scrollHeight - 50) {
+    getImageList() // 加载更多
+  }
+}
+
+// 鼠标事件处理（用于桌面端测试）
+function handleMouseDown(e) {
+  console.log('鼠标按下')
+  if (isRefreshing.value || loading.value) return
+  
+  const container = e.currentTarget
+  if (container.scrollTop > 0) return
+  
+  isMouseDown.value = true
+  isPulling.value = true
+  startY.value = e.clientY
+  currentY.value = startY.value
+  
+  e.preventDefault()
+}
+
+function handleMouseMove(e) {
+  console.log('鼠标移动')
+  if (!isPulling.value || !isMouseDown.value || isRefreshing.value) return
+  
+  currentY.value = e.clientY
+  const deltaY = currentY.value - startY.value
+  
+  if (deltaY > 0) {
+    const distance = Math.min(deltaY * 0.5, MAX_PULL_DISTANCE)
+    pullDistance.value = Math.max(0, distance)
+  }
+}
+
+function handleMouseUp() {
+  console.log('鼠标抬起')
+  if (!isPulling.value || !isMouseDown.value) return
+  
+  isMouseDown.value = false
+  isPulling.value = false
+  // canRefresh计算属性
+  if (canRefresh.value && !isRefreshing.value) {
+    triggerRefresh()
+  } else {
+    resetPull()
+  }
+}
+
+// 触发刷新
+async function triggerRefresh() {
+  isRefreshing.value = true
+  
+  try {
+    await getImageList(true) // 传入 true 表示是刷新操作
+    
+    // 添加一点延迟让用户看到刷新动画
+    await new Promise(resolve => setTimeout(resolve, 300))
+  } catch (error) {
+    console.error('刷新失败:', error)
+  } finally {
+    isRefreshing.value = false
+    resetPull()
+  }
+}
+
+// 重置下拉状态
+function resetPull() {
+  pullDistance.value = 0
+}
+
+onMounted(() => {
+  getImageList()
+})
+</script>
+
+<style scoped>
+.pull-refresh-container {
+  position: relative;
+  max-width: 800px;
+  max-height: 600px;
+  overflow: auto;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pull-refresh-indicator {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.pull-refresh-indicator.can-refresh {
+  background: rgba(64, 158, 255, 0.1);
+}
+
+.pull-refresh-indicator.refreshing {
+  background: rgba(103, 194, 58, 0.1);
+}
+
+.refresh-icon {
+  font-size: 20px;
+  margin-bottom: 5px;
+  transition: transform 0.3s ease;
+}
+
+.refresh-icon.rotating {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-text {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+.comparison-table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  transition: transform 0.3s ease;
+  min-height: 100%;
+}
+
+.image-item {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
+}
+
+.image-item:hover {
+  transform: scale(1.05);
+}
+
+.loading-indicator {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-spinner {
+  font-size: 24px;
+  margin-bottom: 10px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .pull-refresh-container {
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .comparison-table {
     padding: 10px;
+    gap: 8px;
+  }
+  
+  .image-item {
+    width: calc(50vw - 20px);
+    height: calc(50vw - 20px);
+    max-width: 150px;
+    max-height: 150px;
   }
 }
 </style>

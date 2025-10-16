@@ -1,67 +1,49 @@
-
 <template>
-  <div class="img-list">
-    <div v-for="img in images" :key="img" class="img-item">
-      <img
-        v-image-lazy="img"
-        :alt="img.split('/').pop()"
-        :src="placeholder"
-        class="lazy-img"
-        width="180"
-        height="180"
-      />
-      <div class="img-name">{{ img.split('/').pop() }}</div>
-    </div>
-  </div>
+  <ELementTable :tableData="tableData" :columns="columns">
+  </ELementTable>
 </template>
 
 <script setup>
-import imageLazy from '../directives/imageLazy'
-import { onMounted, ref, reactive } from 'vue'
-const objs=reactive({
-  a:1,
-  b:{
-    c:2
+import { ELementTable } from "./ELementTable.vue"
+const tableData = [
+  {
+    date: '2016-05-03',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-02',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-04',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-01',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+]
+const columns = [
+  {
+    prop: 'date',
+    label: '日期',
+    width: '180'
+  },
+  {
+    prop: 'name',
+    label: '姓名',
+    width: '180'
+  },
+  {
+    prop: 'address',
+    label: '地址'
   }
-})
-// 注册自定义指令
-defineOptions({
-  directives: {
-    imageLazy
-  }
-})
-const images = ref([])
-// 占位图（灰色 base64）
-const placeholder =
-  'data:image/svg+xml;base64,' + btoa('<svg width="180" height="180" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#eee"/></svg>')
-onMounted(() => {
-  const context = import.meta.glob('../views/images/*.{png,jpg,jpeg,gif}', { eager: true })
-  images.value = Object.values(context).map(mod => mod.default)
-  images.value = [...images.value,...images.value,...images.value,...images.value]
-})
+]
 </script>
+<style scoped>
 
-<style scoped >
-.img-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-.img-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 180px;
-}
-.lazy-img {
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  background: #eee;
-  object-fit: cover;
-}
-.img-name {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #666;
-}
 </style>
