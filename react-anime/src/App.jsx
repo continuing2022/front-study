@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Products from './component/Products'
 import Anime from './component/anime'
 import Navbar from './component/Navbar'
+import ReduxDemo from './component/redux-demo'
 
 export default function App(){
   return (
@@ -12,7 +13,7 @@ export default function App(){
         <Routes>
           <Route path="/" element={<div className="app"><Products /></div>} />
           <Route path="/anime" element={<Anime />} />
-          <Route path="/new" element={<New />} />
+          <Route path="/redux" element={<ReduxDemo />} />
         </Routes>
       </div>
     </BrowserRouter>

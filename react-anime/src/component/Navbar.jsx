@@ -11,7 +11,7 @@ export default function Navbar(){
       <div className="nav-links">
         <Link to="/" className="nav-link">猜你喜欢</Link>
         <Link to="/anime" className="nav-link">动画</Link>
-        <Link to="/new" className="nav-link">新番</Link>
+        <Link to="/redux" className="nav-link">redux</Link>
         {/* 未来可添加更多链接 */}
       </div>
     </nav>

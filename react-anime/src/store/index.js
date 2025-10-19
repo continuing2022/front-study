@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import uiReducer from './uiSlice'
-
+import toDoListSlice from './toDoList'
+import timerSlice from './timer'
 export const store = configureStore({
   reducer: {
-    ui: uiReducer,
+    toDoList: toDoListSlice,
+    timer: timerSlice,
   },
 })
 
