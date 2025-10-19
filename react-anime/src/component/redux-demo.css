@@ -1,0 +1,86 @@
+.redux-demo{
+  width: 320px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(8,20,40,0.06);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+.title{
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #111827;
+}
+.add-row{
+  display:flex;
+  gap:8px;
+}
+.add-row input{
+  flex:1;
+  padding:8px 10px;
+  border:1px solid #e6e8eb;
+  border-radius:6px;
+  font-size:14px;
+}
+.add-btn{
+  padding:8px 12px;
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+.timer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.time-display{
+  font-size:18px;
+  font-weight:600;
+}
+.timer-controls button{ 
+  margin-left:8px;
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+}
+.timer-controls .start{ background:#10b981; color:#fff }
+.timer-controls .stop{ background:#f59e0b; color:#fff }
+.timer-controls .reset{ background:#ef4444; color:#fff }
+.task-list{
+  list-style:none;
+  padding:0;
+  margin:12px 0 0 0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.task-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 10px;
+  border-radius:6px;
+  border:1px solid #f1f5f9;
+}
+.task-item .task-text{
+  margin-left:8px;
+}
+.task-item.done{
+  background: linear-gradient(90deg,#f8fafc,#eef2ff);
+  color:#6b7280;
+  text-decoration:line-through;
+}
+.del{
+  background:transparent;
+  border:none;
+  color:#ef4444;
+  cursor:pointer;
+}
+.empty{
+  color:#9ca3af;
+  padding:12px 0;
+}

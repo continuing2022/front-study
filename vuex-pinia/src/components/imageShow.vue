@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { ELementTable } from "./ELementTable.vue"
+import  ELementTable  from "./ELementTable.vue"
 const tableData = [
   {
     date: '2016-05-03',
