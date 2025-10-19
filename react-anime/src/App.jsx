@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route,HashRouter } from 'react-router-dom'
 import Products from './component/Products'
 import Anime from './component/anime'
 import Navbar from './component/Navbar'
@@ -7,7 +7,7 @@ import ReduxDemo from './component/redux-demo'
 
 export default function App(){
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Navbar />
       <div className="app-content">
         <Routes>
@@ -16,6 +16,6 @@ export default function App(){
           <Route path="/redux" element={<ReduxDemo />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
