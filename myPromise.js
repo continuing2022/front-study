@@ -31,27 +31,48 @@ class myPromise{
     }
 
   }
+  resolvePromise(resolve,reject,value){
+    try {
+      if(value instanceof myPromise){
+        value.then(resolve,reject)
+      }else{
+        resolve(value)
+      }
+    } catch (error) {
+      reject(error)
+    }
+  }
   then(onFullfilled,onRejected){
-    let promise2=new Promise((resolve,reject)=>{
+    if(!(onFullfilled instanceof Function)){
+      onFullfilled=()=>this.value
+    }
+    if(!(onRejected instanceof Function)){
+      onRejected=()=>this.reason
+    }
+    let promise2=new myPromise((resolve,reject)=>{
       if(this.status==="fullfilled"){
         const value=onFullfilled(this.value)
-        resolve(value)
+        // value可能是一个普通值也可能是一个promise
+        this.resolvePromise(resolve,reject,value)
       }
       if(this.status==="rejected"){
         const reason=onRejected(this.reason)
-        reject(reason)
+        this.resolvePromise(resolve,reject,reason)
       }
       if(this.status==='pedding'){
         this.onFullfilledCallback.push(()=>{
           const value=onFullfilled(this.value)
-          resolve(value)
+          this.resolvePromise(resolve,reject,value)
         })
         this.onRejectedCallback.push(()=>{
           const reason=onRejected(this.reason)
-          reject(reason)
+          this.resolvePromise(resolve,reject,reason)
         })
       }
     })
     return promise2
+  }
+  catch(onRejected){
+    this.then("",onRejected)
   }
 }
