@@ -86,31 +86,19 @@ class myPromise{
       }
     })
   }
+  static all(promises){
+    const ans=[];
+    let count=0;
+    return new myPromise((resolve,reject)=>{
+      promises.forEach((item)=>{
+        this.resolve(item).then((value)=>{
+          ans.push(value)
+          count++;
+          if(count===promises.length)resolve(ans);
+        },(reason)=>{
+          reject(reason)
+        })
+      })
+    })
+  }
 }
-const promise=myPromise.resolve(new myPromise((resolve,reject)=>{
-  reject("promise")
-}))
-promise.then((value)=>{
-  console.log("success:"+value)
-},(reason)=>{
-  console.log("error:"+reason)
-})
-
-
-// const promise=new myPromise((resolve,reject)=>{
-//   resolve("成功")
-// })
-
-// promise.then((value)=>{
-//   console.log("1:"+value)
-//   // throw new Error(value)
-//   return new myPromise((resolve,reject)=>{
-//     reject('promise错误')
-//   })
-//   // return value
-// }).then((value)=>{
-//   console.log("2:"+value)
-//   return value
-// },(reason)=>{
-//   console.log("error21:"+reason)
-// })
