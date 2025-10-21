@@ -101,4 +101,15 @@ class myPromise{
       })
     })
   }
+  static race(promises){
+    return new myPromise((resolve,reject)=>{
+      promises.forEach((item)=>{
+        myPromise.resolve(item).then((value)=>{
+          resolve(value)
+        },(reason)=>{
+          reject(reason)
+        })
+      })
+    })
+  }
 }
