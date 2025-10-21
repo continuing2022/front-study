@@ -9,8 +9,8 @@ class myPromise{
       if(this.status==="pedding"){
         this.value=value
         this.status="fullfilled"
-        this.onFullfilledCallback.forEach((item)=>{
-          item(this.value)
+        this.onFullfilledCallback.forEach((fn)=>{
+          fn()
         })
       }
     }
@@ -18,8 +18,8 @@ class myPromise{
       if(this.status==="pedding"){
         this.reason=reason
         this.status="rejected"
-        this.onFullfilledCallback.forEach((item)=>{
-          item(this.reason)
+        this.onRejectedCallback.forEach((fn)=>{
+          fn()
         })
       }
     }
@@ -32,37 +32,26 @@ class myPromise{
 
   }
   then(onFullfilled,onRejected){
-    if(this.status==="fullfilled"){
-      onFullfilled(this.value)
-    }
-    if(this.status==="rejected"){
-      onRejected(this.reason)
-    }
-    if(this.status==='pedding'){
-      this.onFullfilledCallback.push((value)=>onFullfilled(value))
-      this.onRejectedCallback.push((reason)=>onRejected(reason))
-    }
-    
+    let promise2=new Promise((resolve,reject)=>{
+      if(this.status==="fullfilled"){
+        const value=onFullfilled(this.value)
+        resolve(value)
+      }
+      if(this.status==="rejected"){
+        const reason=onRejected(this.reason)
+        reject(reason)
+      }
+      if(this.status==='pedding'){
+        this.onFullfilledCallback.push(()=>{
+          const value=onFullfilled(this.value)
+          resolve(value)
+        })
+        this.onRejectedCallback.push(()=>{
+          const reason=onRejected(this.reason)
+          reject(reason)
+        })
+      }
+    })
+    return promise2
   }
 }
-
-const promise=new myPromise((resolve,reject)=>{
-  // resolve("成功")
-  // reject("失败") 
-  setTimeout(()=>{
-    resolve('异步成功')
-  },2000)
-  // throw new Error('error')
-})
-
-promise.then((value)=>{
-  console.log("1:"+value)
-},(reason)=>{
-  console.log("error1:"+reason)
-})
-
-promise.then((value)=>{
-  console.log("2:"+value)
-},(reason)=>{
-  console.log("error2:"+reason)
-})
